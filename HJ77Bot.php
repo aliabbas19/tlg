@@ -316,11 +316,13 @@ bot('EditMessageText',[
 }
 if($msg == "on"){
 if($message){
+unlink("msg.php");
 for($i=0;$i<count($users); $i++){
 bot('sendmessage',[
 'chat_id'=>$users[$i],
 'text'=>"$text",
 ]);
+usleep(100000);
 }
 bot('sendmessage',[
 'chat_id'=>$chat_id,
@@ -333,7 +335,6 @@ bot('sendmessage',[
 [['text'=>"رجوع ",'callback_data'=>"paneel"]],
 ]])
 ]);
-unlink("msg.php");
 }}
 if($data == "forward"){
 file_put_contents("forward.php", "on");
@@ -351,12 +352,14 @@ bot('EditMessageText',[
 }
 if($forward == "on"){
 if($message){
+unlink("forward.php");
 for($i=0;$i<count($users); $i++){
 bot('ForwardMessage',[
 'chat_id'=>$users[$i],
 'from_chat_id'=>$chat_id,
 'message_id'=>$message->message_id,
 ]);
+usleep(100000);
 }
 bot('sendmessage',[
 'chat_id'=>$chat_id,
@@ -369,7 +372,6 @@ bot('sendmessage',[
 [['text'=>"رجوع",'callback_data'=>"paneel"]],
 ]])
 ]);
-unlink("forward.php");
 }}
 if($data == "midea"){
 file_put_contents("midea.php", "on");
@@ -391,12 +393,13 @@ if(!isset($message->text)){
 $types = ['voice','audio','video','photo','contact','document','sticker'];
 foreach($up['message'] as $key => $val){
 if(in_array($key,$types) and $midea == "on"){
+unlink("midea.php");
 for($i=0;$i<count($users); $i++){
 bot('send'.$key,[
 'chat_id'=>$users[$i],
 'caption'=>$message->caption,
 $key=>$val['file_id']]);
-unlink("midea.php");
+usleep(100000);
 }
 }
 }}
@@ -416,12 +419,14 @@ bot('EditMessageText',[
 }
 if($photoi == "on"){
 if($message->photo){
+unlink("photoi.php");
 for($i=0;$i<count($users); $i++){
 bot('sendphoto',[
 'chat_id'=>$users[$i],
 'photo'=>$message->photo[0]->file_id,
 'caption'=>$message->caption,
 ]);
+usleep(100000);
 }
 bot('sendmessage',[
 'chat_id'=>$chat_id,
@@ -434,7 +439,6 @@ bot('sendmessage',[
 [['text'=>"رجوع ",'callback_data'=>"paneel"]],
 ]])
 ]);
-unlink("photoi.php");
 }}
 if($data == "inline"){
 file_put_contents("inlin.php", "on");
@@ -452,12 +456,14 @@ bot('EditMessageText',[
 }
 if($inlin == "on"){
 if($message->forward_from or $message->forward_from_chat){
+unlink("inlin.php");
 for($i=0;$i<count($users); $i++){
 bot('forwardmessage',[
 'chat_id'=>$users[$i],
 'from_chat_id'=>$chat_id,
 'message_id'=>$message->message_id,
 ]);
+usleep(100000);
 }
 bot('sendmessage',[
 'chat_id'=>$chat_id,
@@ -470,7 +476,6 @@ bot('sendmessage',[
 [['text'=>"رجوع ",'callback_data'=>"paneel"]],
 ]])
 ]);
-unlink("inlin.php");
 }}
 
 
@@ -3950,6 +3955,9 @@ if ($text and $modes['mode'][$from_id] == "hdiMk00") {
 
 if($data == "onrshq") {
 	if($chat_id == $sudo or $chat_id == $sudo or $chat_id == $sudo  ) {
+    $rshq['Brook']  = "on";
+    SETJSON($rshq);
+    SETJSON12($modes);
 // تم تصحيح اخطاء الملف بواسطه ناميرو @s_p_p1 @HJ_I_N
 
     if($rshq["sSite"] != null and $rshq["sToken"] != null){
@@ -3969,18 +3977,11 @@ if($data == "onrshq") {
 ]
 ])
 ]);
-$rshq['Brook']  = "on";
-SETJSON($rshq); SETJSON12($modes);
       } else {
         bot('EditMessageText',[
           'chat_id'=>$chat_id,
           'message_id'=>$message_id,
-          'text'=>"
-          *
-         لازم تكمل معلومات الرشق بلاول 
-         - التوكن او دومين موقع الرشق مامحطوط
-          *
-          ",
+          'text'=>"تم فتح استقبال الرشق، ولكن يرجى ملاحظة أن معلومات الموقع/التوكن غير مكتملة. قد لا تعمل الخدمات بشكل صحيح حتى يتم تكوينها.",
           'parse_mode'=>"markdown",
           'reply_markup'=>json_encode([ 
           'inline_keyboard'=>[
@@ -4015,7 +4016,7 @@ if($data == "ontrend") {
 ])
 ]);
 
-$rshq['trend'] = true;
+$rshq['trend'] = "on";
 SETJSON($rshq); SETJSON12($modes);
 }
 }
@@ -4039,7 +4040,7 @@ if($data == "oftrend") {
 ])
 ]);
 
-$rshq['trend'] = "x";
+$rshq['trend'] = "off";
 SETJSON($rshq); SETJSON12($modes);
 }
 }
@@ -5216,15 +5217,16 @@ bot('EditMessageText',[
 	} 
 } 
 
-if($rshq['trend'] != "x"){
+if(isset($rshq['trend']) && $rshq['trend'] == "on"){
 $SALEH = json_decode(file_get_contents("YY30Bot/".USR_BOT."/SALEH.json"),1);
 $f= $SALEH['SALEH']['send']['add'];
 rsort($f);
-var_dump($f);
+// var_dump($f); // It's better to remove var_dump from production code
+$ok = ""; // Initialize $ok to prevent errors if $f is empty
 for($i=0;$i<5;$i++){
+if(isset($f[$i]) && $f[$i] != null){ // Check if $f[$i] is set
 $dets = json_decode(file_get_contents("http://api.telegram.org/bot$token/getChat?chat_id=$f[$i]"));
-$name =$dets->result->title;
-if($f[$i] != null){
+$name = $dets->result->title ?? $f[$i]; // Use ID if title is not available
 $V = array_search($f[$i],$SALEH['SALEH']['send']['add']);
 $uS = $SALEH['SALEH']['send']['uname'][$V];
 $u=$i+1;
@@ -5235,15 +5237,12 @@ $Numbers = array(
 '3',
 '4' ,
 '5', 
-
-
 );
 $NumbersBe = array('🥇' ,
 '🥈' ,
 '🥉' , 
 '🏅' , 
 '🏅' , 
-
 );
 
 $u = str_replace($Numbers,$NumbersBe,$u);
@@ -5255,12 +5254,15 @@ if($dh != null) {
   if($dh == null) {
     $fk = $uS;
     } 
-$ok = $ok. " $u*$f[$i]* -> [$fk](tg://user?id=$uS) \n";
+$ok .= " $u*" . $f[$i] . "* -> [$fk](tg://user?id=$uS) \n"; // Append to $ok
 }
 }
+if(empty(trim($ok))){
+    $b = null;
+} else {
+    $b="🛡] المستخدمين الاكثر مشاركة للرابط :
+$ok" ;
 }
-if($rshq['trend'] != "x"){
-$b="🛡] المستخدمين الاكثر مشاركة للرابط : \n$ok" ;
 }else{
   $b = null;
 }
@@ -5560,7 +5562,19 @@ $ty
 
  if($data == "service") {
  	if($rshq['Brook'] == "on" ) {
-
+		if($rshq["sSite"] == null or $rshq["sToken"] == null){
+			bot('EditMessageText',[
+				'chat_id'=>$chat_id,
+				'message_id'=>$message_id,
+				'text'=>"خدمات الرشق مفعلة ولكنها قيد التكوين حاليًا. يرجى المحاولة لاحقًا.",
+				'parse_mode'=>"markdown",
+				'reply_markup'=>json_encode([
+					'inline_keyboard'=>[
+						[['text'=>"$NamesBACK",'callback_data'=>"tobot" ]],
+					]
+				])
+			]);
+		} else {
             $key['inline_keyboard'][] = [
           ['text' => "كواي 🧡" . ($rshq['taskera']["kwai"] ?? "❌"), 'callback_data' => "assasi_kwai"],          ['text' => "واتساب 💚" . ($rshq['taskera']["sweat"] ?? "❌"), 'callback_data' => "assasi_sweat"]
       ];
@@ -5689,6 +5703,7 @@ bot('EditMessageText',[
 'parse_mode'=>"markdown",
 'reply_markup'=>json_encode($key),
 ]);
+}
 } else {
 	$key = ['inline_keyboard' => []];
 	if($rshq['FREE'] != null) {
@@ -6698,6 +6713,21 @@ if(is_numeric($text) and $modes['mode'][$from_id]  ==  "SETd") {
     $mix = explode("|", $rshq['min_mix'][$from_id])[1];
 	if($coin >= $s3r){
 		if($rshq['Brook'] == "on" ) {
+			if($rshq["sSite"] == null or $rshq["sToken"] == null){
+				bot('sendmessage',[
+					'chat_id'=>$chat_id,
+					'text'=>"لا يمكن معالجة طلبك حاليًا لأن خدمات الرشق قيد التكوين. يرجى المحاولة لاحقًا.",
+					'parse_mode'=>"markdown",
+					'reply_markup'=>json_encode([
+						'inline_keyboard'=>[
+							[['text'=>"$NamesBACK",'callback_data'=>"tobot" ]],
+						]
+					])
+				]);
+				$modes['mode'][$from_id] = null;
+				SETJSON12($modes);
+				return false;
+			}
 			if($text >= $min){
 				if($text <= $mix){
 
